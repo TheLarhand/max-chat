@@ -1,0 +1,75 @@
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+}
+
+.placeholder {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.row {
+  display: flex;
+}
+
+.in {
+  justify-content: flex-start;
+}
+
+.out {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: min(75%, 520px);
+  padding: 8px 12px 6px;
+  border-radius: var(--radius-bubble);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.in .bubble {
+  background: var(--incoming);
+  border: 1px solid var(--incoming-border);
+  box-shadow: 0 1px 2px rgba(30, 40, 90, 0.06);
+  border-bottom-left-radius: 6px;
+}
+
+.out .bubble {
+  background: var(--accent-gradient);
+  color: #fff;
+  border-bottom-right-radius: 6px;
+}
+
+.text {
+  margin-right: 8px;
+}
+
+.time {
+  float: right;
+  margin: 6px 0 0 8px;
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+// На очень широких экранах исходящие не уезжают к правому краю:
+// все сообщения идут слева, а различаются цветом.
+@media (min-width: 1400px) {
+  .out {
+    justify-content: flex-start;
+  }
+
+  .out .bubble {
+    border-bottom-right-radius: var(--radius-bubble);
+    border-bottom-left-radius: 6px;
+  }
+}
