@@ -4,6 +4,7 @@ import {
   getErrorMessage,
   isAbortError,
   receiveNotification,
+  GreenApiError,
 } from '../services/greenApi';
 import type { Credentials } from '../types/credentials';
 import type { Message } from '../types/message';
@@ -78,14 +79,23 @@ export function useNotifications({ credentials, onMessage }: Options): { error: 
           // Защита от «горячего» цикла, если сервер отвечает мгновенно.
           const elapsed = Date.now() - startedAt;
           if (!notification && elapsed < MIN_CYCLE_MS) await sleep(MIN_CYCLE_MS - elapsed, signal);
+
         } catch (err) {
           if (signal.aborted || isAbortError(err)) return;
+
+          // HTTP 408 при ожидании уведомления — штатный тайм-аут.
+          if (err instanceof GreenApiError && err.status === 408) {
+            continue;
+          }
+
           console.error('Ошибка получения уведомлений:', getErrorMessage(err));
           setError(`Не удаётся получить новые сообщения: ${getErrorMessage(err)}`);
+
           const delay = RETRY_DELAYS_MS[Math.min(failures, RETRY_DELAYS_MS.length - 1)];
           failures += 1;
           await sleep(delay, signal);
         }
+
       }
     }
 
